@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Vertual Lab LK | Premium Virtual Science Lab</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        /* ========== PRELOADER STYLES ========== */
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0a0f2c, #0f172a);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        
+        .preloader.fade-out {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .loader-container {
+            text-align: center;
+        }
+        
+        .loader-logo {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #818cf8, #2dd4bf);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 30px;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+        }
+        
+        .loader-spinner {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 25px;
+            border: 4px solid rgba(79, 70, 229, 0.3);
+            border-top: 4px solid #4f46e5;
+            border-right: 4px solid #06b6d4;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loader-text {
+            color: #cbd5e1;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            margin-top: 20px;
+        }
+        
+        .loader-dots {
+            display: inline-block;
+            width: 20px;
+            text-align: left;
+        }
+        
+        .loader-dots::after {
+            content: '...';
+            animation: dots 1.5s steps(4, end) infinite;
+        }
+        
+        @keyframes dots {
+            0%, 20% { content: ''; }
+            40% { content: '.'; }
+            60% { content: '..'; }
+            80%, 100% { content: '...'; }
+        }
+        
+        /* Main Content - Initially Hidden */
+        .main-content {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 1s ease, visibility 0s linear 1s;
+        }
+        
+        .main-content.show {
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 1s ease, visibility 0s;
+        }
+        
+        /* Theme Variables */
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --secondary: #06b6d4;
+            --secondary-dark: #0891b2;
+            --bg-dark: #0a0f2c;
+            --bg-light: #f0f4f8;
+            --card-bg-dark: rgba(255, 255, 255, 0.06);
+            --card-bg-light: rgba(0, 0, 0, 0.04);
+            --text-dark: #ffffff;
+            --text-light: #1a1e2b;
+            --text-muted-dark: #cbd5e1;
+            --text-muted-light: #475569;
+            --glass-border-dark: rgba(255, 255, 255, 0.1);
+            --glass-border-light: rgba(0, 0, 0, 0.1);
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.5;
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        body.dark {
+            background: var(--bg-dark);
+            color: var(--text-dark);
+        }
+        
+        body.light {
+            background: var(--bg-light);
+            color: var(--text-light);
+        }
+        
+        /* Particle Canvas */
+        #particleCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        body.light #particleCanvas {
+            opacity: 0.5;
+        }
+        
+        .gradient-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            transition: background 0.3s ease;
+        }
+        
+        body.dark .gradient-overlay {
+            background: radial-gradient(circle at 20% 30%, rgba(30, 40, 80, 0.5), rgba(10, 15, 44, 0.85));
+        }
+        
+        body.light .gradient-overlay {
+            background: radial-gradient(circle at 20% 30%, rgba(200, 210, 255, 0.3), rgba(240, 244, 248, 0.9));
+        }
+        
+        .content-wrapper {
+            position: relative;
+            z-index: 2;
+        }
+        
+        /* Progress Bar */
+        .progress-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: transparent;
+            z-index: 1000;
+        }
+        .progress-bar {
+            height: 4px;
+            background: linear-gradient(90deg, #4f46e5, #06b6d4);
+            width: 0%;
+            transition: width 0.1s ease;
+        }
+        
+        /* Glassmorphism Navbar */
+        .navbar {
+            padding: 18px 0;
+            backdrop-filter: blur(16px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: background 0.3s ease, border-color 0.3s ease;
+            animation: slideDown 0.8s ease;
+        }
+        
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        body.dark .navbar {
+            background: rgba(15, 23, 42, 0.7);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        body.light .navbar {
+            background: rgba(255, 255, 255, 0.8);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .container { max-width: 1280px; margin: 0 auto; padding: 0 28px; }
+        
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .logo {
+            font-size: 1.7rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #818cf8, #2dd4bf);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        
+        .lang-selector {
+            display: flex;
+            gap: 10px;
+            background: rgba(128, 128, 128, 0.15);
+            padding: 5px 12px;
+            border-radius: 60px;
+            backdrop-filter: blur(4px);
+        }
+        
+        .lang-btn {
+            background: transparent;
+            border: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            padding: 6px 12px;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        
+        body.dark .lang-btn { color: #e2e8f0; }
+        body.light .lang-btn { color: #1e293b; }
+        
+        .lang-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        
+        /* Theme Toggle Button */
+        .theme-toggle {
+            background: rgba(128, 128, 128, 0.2);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: 0.2s;
+            backdrop-filter: blur(4px);
+        }
+        
+        body.dark .theme-toggle { color: #fbbf24; background: rgba(255,255,255,0.1); }
+        body.light .theme-toggle { color: #4f46e5; background: rgba(0,0,0,0.05); }
+        
+        .nav-links { display: flex; gap: 28px; align-items: center; flex-wrap: wrap; }
+        .nav-links a { text-decoration: none; font-weight: 500; transition: 0.2s; }
+        body.dark .nav-links a { color: #e2e8f0; }
+        body.light .nav-links a { color: #1e293b; }
+        .nav-links a:hover { color: var(--secondary); }
+        
+        .btn-outline-light {
+            background: transparent;
+            border: 1.5px solid var(--primary);
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+        
+        body.dark .btn-outline-light { color: white; }
+        body.light .btn-outline-light { color: var(--primary); }
+        .btn-outline-light:hover { background: var(--primary); color: white; border-color: var(--primary); }
+        
+        /* Typing Animation Container */
+        .typing-container {
+            font-size: 1.4rem;
+            margin: 15px 0;
+        }
+        
+        .typed-text {
+            font-weight: 700;
+            color: var(--secondary);
+        }
+        
+        .cursor {
+            display: inline-block;
+            width: 3px;
+            margin-left: 4px;
+            animation: blink 0.7s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        
+        .hero-left h1 { font-size: 3.2rem; font-weight: 800; line-height: 1.2; margin-bottom: 20px; }
+        
+        .hero-left p { font-size: 1.2rem; margin-bottom: 30px; max-width: 90%; }
+        body.dark .hero-left p { color: #cbd5e1; }
+        body.light .hero-left p { color: #475569; }
+        
+        .cta-group { display: flex; gap: 18px; flex-wrap: wrap; }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            padding: 14px 32px;
+            border-radius: 44px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: 0.25s;
+            box-shadow: 0 8px 18px rgba(79, 70, 229, 0.4);
+            display: inline-block;
+            text-decoration: none;
+        }
+        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); }
+        
+        .btn-secondary {
+            background: rgba(128, 128, 128, 0.15);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(128, 128, 128, 0.3);
+            padding: 14px 32px;
+            border-radius: 44px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+        body.dark .btn-secondary { color: white; }
+        body.light .btn-secondary { color: var(--primary); }
+        .btn-secondary:hover { background: rgba(128, 128, 128, 0.25); border-color: var(--secondary); }
+        
+        .hero-right { flex: 0.9; display: flex; justify-content: center; }
+        .icon-card {
+            backdrop-filter: blur(16px);
+            border-radius: 64px;
+            padding: 24px;
+            text-align: center;
+            transition: all 0.3s ease;
+            animation: fadeInUp 1s ease 0.3s both;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        body.dark .icon-card {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+        body.light .icon-card {
+            background: rgba(255,255,255,0.5);
+            border: 1px solid rgba(0,0,0,0.1);
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.1);
+        }
+        
+        .app-icon-img { width: 160px; height: 160px; object-fit: contain; border-radius: 48px; background: rgba(255,255,255,0.1); padding: 8px; }
+        
+        /* Glass Cards */
+        .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 35px; margin: 40px 0; }
+        
+        .subject-card {
+            backdrop-filter: blur(12px);
+            border-radius: 32px;
+            padding: 28px 24px;
+            transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            cursor: pointer;
+            animation: fadeInUp 0.8s ease both;
+            animation-delay: calc(0.1s * var(--i, 0));
+        }
+        
+        body.dark .subject-card {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        body.light .subject-card {
+            background: rgba(255,255,255,0.8);
+            border: 1px solid rgba(0,0,0,0.08);
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1);
+        }
+        
+        .subject-card:hover { transform: translateY(-8px) scale(1.02); }
+        
+        .card-icon { font-size: 2.5rem; margin-bottom: 15px; }
+        .subject-card h3 { font-size: 1.6rem; margin-bottom: 10px; }
+        
+        .feature-list { list-style: none; margin-top: 15px; }
+        .feature-list li { display: flex; gap: 12px; margin-bottom: 12px; align-items: center; }
+        .feature-list i { color: var(--secondary); width: 20px; }
+        
+        .mcq-badge { background: rgba(79,70,229,0.3); border-radius: 40px; padding: 6px 12px; display: inline-block; font-size: 0.75rem; font-weight: 600; margin-top: 12px; }
+        
+        .features-highlight {
+            backdrop-filter: blur(12px);
+            border-radius: 70px;
+            padding: 50px 30px;
+            margin: 40px 0;
+            animation: fadeInUp 1s ease 0.6s both;
+        }
+        
+        .stats { display: flex; gap: 40px; margin: 30px 0; flex-wrap: wrap; }
+        .stat-item h4 { font-size: 2.5rem; font-weight: 800; color: var(--secondary); }
+        
+        .developer-card {
+            backdrop-filter: blur(12px);
+            border-radius: 36px;
+            padding: 30px;
+            margin: 30px 0;
+            text-align: center;
+            animation: fadeInUp 1s ease 0.7s both;
+        }
+        
+        .cta-section {
+            background: linear-gradient(135deg, rgba(79,70,229,0.9), rgba(6,182,212,0.9));
+            backdrop-filter: blur(8px);
+            border-radius: 60px;
+            padding: 60px 30px;
+            text-align: center;
+            margin: 50px 0;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            animation: fadeInUp 1s ease 0.8s both;
+        }
+        
+        /* Floating Action Button */
+        .fab {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 55px;
+            height: 55px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 99;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(79,70,229,0.5);
+            border: none;
+        }
+        .fab.show { opacity: 1; visibility: visible; }
+        .fab:hover { background: var(--primary-dark); transform: scale(1.1); }
+        
+        /* Floating Share Button */
+        .share-fab {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            width: 50px;
+            height: 50px;
+            background: var(--secondary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.3rem;
+            cursor: pointer;
+            z-index: 99;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(6,182,212,0.5);
+            border: none;
+        }
+        .share-fab:hover { transform: scale(1.1) rotate(15deg); }
+        
+        /* Mobile Bottom Navigation */
+        .mobile-bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 12px 20px;
+            justify-content: space-around;
+            z-index: 98;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .mobile-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            text-decoration: none;
+            font-size: 0.7rem;
+            transition: 0.2s;
+        }
+        
+        body.dark .mobile-nav-item { color: #94a3b8; }
+        body.light .mobile-nav-item { color: #475569; }
+        .mobile-nav-item.active { color: var(--secondary); }
+        .mobile-nav-item i { font-size: 1.3rem; }
+        
+        footer { padding: 40px 0 30px; border-top: 1px solid rgba(128,128,128,0.2); text-align: center; animation: fadeInUp 1s ease 0.9s both; }
+        .social-links a { font-size: 1.4rem; margin: 0 12px; transition: 0.2s; display: inline-block; }
+        .social-links a:hover { color: var(--secondary); transform: translateY(-3px); }
+        
+        @media (max-width: 800px) {
+            .hero-left h1 { font-size: 2.4rem; }
+            .nav-content { flex-direction: column; }
+            .lang-selector { order: 2; }
+            .fab, .share-fab { width: 45px; height: 45px; font-size: 1.2rem; }
+            .mobile-bottom-nav { display: flex; padding-bottom: 20px; }
+            body { padding-bottom: 70px; }
+        }
+        
+        @keyframes neonPulse {
+            0%, 100% { box-shadow: 0 0 10px rgba(79, 70, 229, 0.5); }
+            50% { box-shadow: 0 0 25px rgba(79, 70, 229, 0.8); }
+        }
+        
+        .btn-primary, .fab, .share-fab {
+            animation: neonPulse 2s infinite;
+        }
+        
+        /* Sequential Fade In for Hero Elements */
+        .hero-left .badge { animation: fadeInUp 0.8s ease 0.1s both; }
+        .hero-left h1 { animation: fadeInUp 0.8s ease 0.2s both; }
+        .hero-left .typing-container { animation: fadeInUp 0.8s ease 0.3s both; }
+        .hero-left p { animation: fadeInUp 0.8s ease 0.4s both; }
+        .hero-left .cta-group { animation: fadeInUp 0.8s ease 0.5s both; }
+        
+        /* Card delay variables */
+        .subject-card:nth-child(1) { --i: 1; }
+        .subject-card:nth-child(2) { --i: 2; }
+        .subject-card:nth-child(3) { --i: 3; }
+        .subject-card:nth-child(4) { --i: 4; }
+        
+        [data-aos] { pointer-events: auto !important; }
+    </style>
+</head>
+<body class="dark">
+    <!-- PRELOADER -->
+    <div class="preloader" id="preloader">
+        <div class="loader-container">
+            <div class="loader-logo">VERTUAL LAB LK</div>
+            <div class="loader-spinner"></div>
+            <div class="loader-text">
+                Loading<span class="loader-dots"></span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- MAIN CONTENT (Initially Hidden) -->
+    <div class="main-content" id="mainContent">
+        <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+        <canvas id="particleCanvas"></canvas>
+        <div class="gradient-overlay"></div>
+        
+        <button class="fab" id="backToTop"><i class="fas fa-arrow-up"></i></button>
+        <button class="share-fab" id="shareBtn"><i class="fas fa-share-alt"></i></button>
+        
+        <div class="mobile-bottom-nav" id="mobileNav">
+            <a href="#home" class="mobile-nav-item active"><i class="fas fa-home"></i><span>Home</span></a>
+            <a href="#subjects" class="mobile-nav-item"><i class="fas fa-flask"></i><span>Subjects</span></a>
+            <a href="#details" class="mobile-nav-item"><i class="fas fa-info-circle"></i><span>Details</span></a>
+            <a href="#cta" class="mobile-nav-item"><i class="fas fa-download"></i><span>Download</span></a>
+        </div>
+        
+        <div class="content-wrapper">
+            <nav class="navbar">
+                <div class="container nav-content">
+                    <div class="logo">VERTUAL<span>LAB LK</span></div>
+                    <div style="display: flex; gap: 15px; align-items: center;">
+                        <div class="lang-selector">
+                            <button class="lang-btn active" data-lang="si">සිංහල</button>
+                            <button class="lang-btn" data-lang="en">English</button>
+                            <button class="lang-btn" data-lang="ta">தமிழ்</button>
+                        </div>
+                        <button class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i></button>
+                    </div>
+                    <div class="nav-links">
+                        <a href="#home" data-key="nav_home">මුල් පිටුව</a>
+                        <a href="#subjects" data-key="nav_subjects">විෂයයන්</a>
+                        <a href="#details" data-key="nav_details">විස්තර</a>
+                        <a href="#cta" class="btn-outline-light" data-key="nav_download">බාගත කිරීම්</a>
+                    </div>
+                </div>
+            </nav>
+            
+            <main>
+                <section id="home" class="hero" style="padding: 60px 0 50px;">
+                    <div class="container hero-grid" style="display: flex; align-items: center; gap: 50px; flex-wrap: wrap;">
+                        <div class="hero-left">
+                            <div class="badge" style="display: inline-block; background: rgba(79,70,229,0.2); padding: 6px 14px; border-radius: 40px; margin-bottom: 20px;" data-key="hero_badge"><i class="fas fa-flask"></i> අතථ්‍ය විද්‍යාගාරය</div>
+                            <h1><span data-key="hero_title1">Vertual Lab LK</span><br><span data-key="hero_title2">සැබෑ විද්‍යාගාර අත්දැකීම් ඩිජිටල්ව</span></h1>
+                            <div class="typing-container">
+                                <span data-key="typing_prefix">ප්‍රායෝගික අත්දැකීම් සඳහා </span>
+                                <span class="typed-text" id="typed-word"></span>
+                                <span class="cursor">|</span>
+                            </div>
+                            <p data-key="hero_desc">A/L Chemistry, Physics, Biology හා O/L Science සඳහා ප්‍රායෝගික අත්හදාබැලීම් සහ බුද්ධි පරීක්ෂණ (MCQ) එකම තැනක.</p>
+                            <div class="cta-group">
+                                <a href="#" class="btn-primary" data-key="cta_play"><i class="fab fa-google-play"></i> යෙදුම ලබාගන්න</a>
+                                <a href="#subjects" class="btn-secondary" data-key="cta_explore"><i class="fas fa-microscope"></i> විෂය බලන්න</a>
+                            </div>
+                        </div>
+                        <div class="hero-right">
+                            <div class="icon-card">
+                                <img class="app-icon-img" src="data:image/png;base64,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" alt="Vertual Lab LK App Icon">
+                                <p style="margin-top: 10px; font-weight: 700;" data-key="app_official">Vertual Lab LK Official</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <section id="subjects" class="container">
+                    <h2 class="section-title" style="text-align:center; font-size:2rem; margin-bottom:10px;" data-key="subjects_title">📚 අපගේ විෂය පරාසය</h2>
+                    <p class="section-desc" style="text-align:center; max-width:700px; margin:0 auto 40px;" data-key="subjects_desc">උසස් පෙළ හා සාමාන්‍ය පෙළ විද්‍යාව සඳහා අන්තර්ක්‍රියාකාරී ප්‍රායෝගික අත්හදාබැලීම් සහ ප්‍රශ්න භාණ්ඩාගාර</p>
+                    <div class="cards-grid">
+                        <div class="subject-card"><div class="card-icon"><i class="fas fa-dna" style="color:#818cf8;"></i></div><h3 data-key="chem_title">A/L Chemistry</h3><p data-key="chem_desc">රසායනික ප්‍රතික්‍රියා, සමතුලිතතාව, කාබනික රසායන විද්‍යාව</p><ul class="feature-list"><li><i class="fas fa-vial"></i> <span data-key="chem_prac">ප්‍රායෝගික 30+ — අතථ්‍ය රසායනාගාර සිමියුලේෂන්</span></li><li><i class="fas fa-check-circle"></i> <span data-key="chem_mcq">MCQ ප්‍රශ්න 500+</span></li></ul><div class="mcq-badge" data-key="chem_badge">අලුත් අනුහුරුකරණ</div></div>
+                        <div class="subject-card"><div class="card-icon"><i class="fas fa-microchip" style="color:#2dd4bf;"></i></div><h3 data-key="phy_title">A/L Physics</h3><p data-key="phy_desc">යාන්ත්‍ර විද්‍යාව, විද්‍යුත් චුම්භකත්වය, තරංග</p><ul class="feature-list"><li><i class="fas fa-waveform"></i> <span data-key="phy_prac">අතථ්‍ය පර්යේෂණ 25+</span></li><li><i class="fas fa-puzzle-piece"></i> <span data-key="phy_mcq">MCQ 450+</span></li></ul><div class="mcq-badge" data-key="phy_badge">අන්තර්ක්‍රියාකාරී</div></div>
+                        <div class="subject-card"><div class="card-icon"><i class="fas fa-leaf" style="color:#f472b6;"></i></div><h3 data-key="bio_title">A/L Biology</h3><p data-key="bio_desc">මානව ශරීරය, ජාන විද්‍යාව, පරිසර පද්ධති</p><ul class="feature-list"><li><i class="fas fa-heartbeat"></i> <span data-key="bio_prac">3D ප්‍රායෝගික 20+</span></li><li><i class="fas fa-question-circle"></i> <span data-key="bio_mcq">MCQ 600+</span></li></ul><div class="mcq-badge" data-key="bio_badge">සජීවී අත්දැකීම්</div></div>
+                        <div class="subject-card"><div class="card-icon"><i class="fas fa-school" style="color:#fb923c;"></i></div><h3 data-key="ol_title">O/L Science</h3><p data-key="ol_desc">භෞතික, ජීව විද්‍යාව, පාරිසරික විද්‍යාව</p><ul class="feature-list"><li><i class="fas fa-flask"></i> <span data-key="ol_prac">ප්‍රායෝගික 20+</span></li><li><i class="fas fa-graduation-cap"></i> <span data-key="ol_mcq">MCQ 800+</span></li></ul><div class="mcq-badge" data-key="ol_badge">සියලු ඒකක සඳහා</div></div>
+                    </div>
+                </section>
+                
+                <div class="container" id="details">
+                    <div class="features-highlight"><div class="two-columns" style="display: flex; gap: 50px; flex-wrap: wrap; align-items: center;"><div class="feature-text"><h2 style="color:inherit;" data-key="feature_title">🔬 ප්‍රායෝගික හා MCQ — විභාග ජයග්‍රහණය</h2><p data-key="feature_desc">Vertual Lab Lk යෙදුම තුළ සැබෑ විද්‍යාගාර ආකාරයේ සිමියුලේෂන් සහ ප්‍රශ්න පුහුණුව එකට.</p><div class="stats"><div class="stat-item"><h4 class="counter" id="counter1" data-target="120">0</h4><p data-key="stat1">අතථ්‍ය ප්‍රායෝගික</p></div><div class="stat-item"><h4 class="counter" id="counter2" data-target="2500">0</h4><p data-key="stat2">MCQ ප්‍රශ්න</p></div><div class="stat-item"><h4 class="counter" id="counter3" data-target="10">0</h4><p data-key="stat3">විෂය ඒකක</p></div></div></div><div style="text-align:center; background:rgba(128,128,128,0.1); border-radius:48px; padding:30px;"><i class="fas fa-mobile-alt" style="font-size:4rem;color:var(--secondary);"></i><h3 style="margin-top:20px;" data-key="offline_title">ඕනෑම තැනක, ඕනෑම වේලාවක</h3><p data-key="offline_desc">Mobile & Tablet හි සුමට අත්දැකීම් — ඕෆ්ලයින් ප්‍රවේශය.</p></div></div></div>
+                </div>
+                
+                <div class="container">
+                    <div class="developer-card"><i class="fas fa-code" style="font-size:3rem;color:var(--secondary);"></i><h2 data-key="dev_title">App Developer</h2><p style="font-size:1.6rem;font-weight:700;margin:10px 0;">W. Kavindu Nimesh Vanel Fernando</p><p data-key="dev_desc">Full-stack innovator & educational technologist. Creator of Vertual Lab Lk for Sri Lankan A/L and O/L students.</p><div style="margin-top:20px;display:flex;justify-content:center;gap:20px;flex-wrap:wrap;"><span><i class="fas fa-envelope"></i> <strong>kavindusky07@gmail.com</strong></span><span><i class="fab fa-github"></i> /kavindu-nimesh</span><span><i class="fab fa-linkedin"></i> Kavindu Fernando</span></div></div>
+                </div>
+                
+                <div class="container" id="cta">
+                    <div class="cta-section"><h2 data-key="cta_title">🚀 Vertual Lab LK අදම ආරම්භ කරන්න</h2><p style="font-size:1.2rem;opacity:0.9;margin-bottom:32px;" data-key="cta_sub">A/L සහ O/L සිසුන් සඳහා නිර්මාණය කළ අති නවීන ප්‍රායෝගික සහ MCQ යෙදුම.</p><div style="display:flex;gap:20px;justify-content:center;flex-wrap:wrap;"><a href="#" class="btn-primary" style="background:white; color:#0f172a;"><i class="fab fa-apple"></i> App Store</a><a href="#" class="btn-primary" style="background:white; color:#0f172a;"><i class="fab fa-google-play"></i> Google Play</a></div><p style="margin-top:30px;"><i class="fas fa-globe"></i> <span data-key="footer_contact">සහය: kavindusky07@gmail.com</span></p></div>
+                </div>
+            </main>
+            
+            <footer><div class="container"><div class="social-links"><a href="#"><i class="fab fa-facebook"></i></a><a href="#"><i class="fab fa-instagram"></i></a><a href="#"><i class="fab fa-linkedin"></i></a><a href="#"><i class="fab fa-twitter"></i></a></div><p>© 2026 Vertual Lab Lk — <span data-key="footer_rights">W. Kavindu Nimesh Vanel Fernando (kavindusky07@gmail.com)</span></p></div></footer>
+        </div>
+    </div>
+    
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // ========== PRELOADER LOGIC ==========
+        window.addEventListener('load', function() {
+            const preloader = document.getElementById('preloader');
+            const mainContent = document.getElementById('mainContent');
+            
+            setTimeout(() => {
+                preloader.classList.add('fade-out');
+                mainContent.classList.add('show');
+                setTimeout(() => {
+                    preloader.style.display = 'none';
+                }, 500);
+            }, 1500); // Preloader shows for 1.5 seconds
+        });
+        
+        AOS.init({ duration: 800, once: true, offset: 100 });
+        
+        // ========== TYPING ANIMATION ==========
+        const words = ["A/L Chemistry", "A/L Physics", "A/L Biology", "O/L Science"];
+        let wordIndex = 0, charIndex = 0, isDeleting = false;
+        const typedElement = document.getElementById('typed-word');
+        
+        function typeEffect() {
+            const currentWord = words[wordIndex];
+            if (isDeleting) {
+                typedElement.textContent = currentWord.substring(0, charIndex - 1);
+                charIndex--;
+            } else {
+                typedElement.textContent = currentWord.substring(0, charIndex + 1);
+                charIndex++;
+            }
+            if (!isDeleting && charIndex === currentWord.length) {
+                isDeleting = true;
+                setTimeout(typeEffect, 2000);
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                wordIndex = (wordIndex + 1) % words.length;
+                setTimeout(typeEffect, 500);
+            } else {
+                setTimeout(typeEffect, isDeleting ? 80 : 120);
+            }
+        }
+        typeEffect();
+        
+        // ========== PARTICLE BACKGROUND ==========
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [], mouseX = null, mouseY = null;
+        
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 3 + 1;
+                this.speedX = (Math.random() - 0.5) * 0.4;
+                this.speedY = (Math.random() - 0.5) * 0.3;
+            }
+            update() {
+                if (mouseX !== null && mouseY !== null) {
+                    const dx = this.x - mouseX, dy = this.y - mouseY, dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 100) {
+                        const angle = Math.atan2(dy, dx), force = (100 - dist) / 100;
+                        this.x += Math.cos(angle) * force * 2;
+                        this.y += Math.sin(angle) * force * 2;
+                    }
+                }
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.x > canvas.width) this.x = 0;
+                if (this.y < 0) this.y = canvas.height;
+                if (this.y > canvas.height) this.y = 0;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(100, 150, 255, ${document.body.classList.contains('dark') ? 0.4 : 0.2})`;
+                ctx.fill();
+            }
+        }
+        
+        function initParticles() { particles = []; for (let i = 0; i < 70; i++) particles.push(new Particle()); }
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animateParticles);
+        }
+        
+        window.addEventListener('resize', () => { resizeCanvas(); initParticles(); });
+        window.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
+        window.addEventListener('mouseleave', () => { mouseX = null; mouseY = null; });
+        
+        resizeCanvas(); initParticles(); animateParticles();
+        
+        // ========== PROGRESS BAR ==========
+        window.addEventListener('scroll', () => {
+            const winScroll = document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            document.getElementById('progressBar').style.width = (winScroll / height) * 100 + '%';
+        });
+        
+        // ========== BACK TO TOP ==========
+        const backBtn = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => { backBtn.classList.toggle('show', window.scrollY > 300); });
+        backBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+        
+        // ========== SHARE BUTTON ==========
+        document.getElementById('shareBtn').addEventListener('click', () => {
+            if (navigator.share) navigator.share({ title: 'Vertual Lab LK', url: window.location.href });
+            else alert('Share this website: ' + window.location.href);
+        });
+        
+        // ========== ANIMATED COUNTERS ==========
+        function startCounters() {
+            document.querySelectorAll('.counter').forEach(counter => {
+                const target = parseInt(counter.dataset.target);
+                let current = 0;
+                const increment = target / 50;
+                function update() { current += increment; if (current < target) { counter.innerText = Math.floor(current); requestAnimationFrame(update); } else counter.innerText = target; }
+                update();
+            });
+        }
+        const observer = new IntersectionObserver((e) => { if (e[0].isIntersecting) { startCounters(); observer.disconnect(); } }, { threshold: 0.3 });
+        observer.observe(document.querySelector('.stats'));
+        
+        // ========== THEME TOGGLE ==========
+        const themeToggle = document.getElementById('themeToggle');
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark');
+            document.body.classList.toggle('light');
+            const icon = themeToggle.querySelector('i');
+            icon.className = document.body.classList.contains('dark') ? 'fas fa-moon' : 'fas fa-sun';
+        });
+        
+        // ========== MOBILE NAV ACTIVE STATE ==========
+        document.querySelectorAll('.mobile-nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.mobile-nav-item').forEach(nav => nav.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+        // ========== TRANSLATION ==========
+        const translations = {
+            si: {
+                nav_home: "මුල් පිටුව", nav_subjects: "විෂයයන්", nav_details: "විස්තර", nav_download: "බාගත",
+                hero_badge: "🔬 අතථ්‍ය විද්‍යාගාරය", hero_title1: "Vertual Lab LK", hero_title2: "සැබෑ විද්‍යාගාර අත්දැකීම් ඩිජිටල්ව",
+                typing_prefix: "ප්‍රායෝගික අත්දැකීම් සඳහා ", hero_desc: "A/L Chemistry, Physics, Biology හා O/L Science සඳහා ප්‍රායෝගික අත්හදාබැලීම් සහ MCQ.",
+                cta_play: "යෙදුම ලබාගන්න", cta_explore: "විෂය බලන්න", app_official: "Vertual Lab LK Official",
+                subjects_title: "📚 අපගේ විෂය පරාසය", subjects_desc: "උසස් පෙළ හා සාමාන්‍ය පෙළ විද්‍යාව සඳහා අන්තර්ක්‍රියාකාරී ප්‍රායෝගික",
+                chem_title: "A/L Chemistry", chem_desc: "රසායනික ප්‍රතික්‍රියා", chem_prac: "ප්‍රායෝගික 30+", chem_mcq: "MCQ 500+", chem_badge: "අලුත්",
+                phy_title: "A/L Physics", phy_desc: "යාන්ත්‍ර විද්‍යාව", phy_prac: "අතථ්‍ය පර්යේෂණ 25+", phy_mcq: "MCQ 450+", phy_badge: "අන්තර්ක්‍රියාකාරී",
+                bio_title: "A/L Biology", bio_desc: "මානව ශරීරය", bio_prac: "3D ප්‍රායෝගික 20+", bio_mcq: "MCQ 600+", bio_badge: "සජීවී",
+                ol_title: "O/L Science", ol_desc: "භෞතික, ජීව විද්‍යාව", ol_prac: "ප්‍රායෝගික 20+", ol_mcq: "MCQ 800+", ol_badge: "සියලුම",
+                feature_title: "🔬 ප්‍රායෝගික හා MCQ", feature_desc: "සැබෑ විද්‍යාගාර සිමියුලේෂන්.",
+                stat1: "ප්‍රායෝගික", stat2: "MCQ", stat3: "ඒකක", offline_title: "ඕනෑම තැනක", offline_desc: "ඕෆ්ලයින් ප්‍රවේශය.",
+                dev_title: "සංවර්ධක", dev_desc: "Vertual Lab Lk නිර්මාතෘ.",
+                cta_title: "අදම ආරම්භ කරන්න", cta_sub: "A/L සහ O/L සිසුන් සඳහා", footer_contact: "සහය: kavindusky07@gmail.com", footer_rights: "W. Kavindu Nimesh Vanel Fernando"
+            },
+            en: {
+                nav_home: "Home", nav_subjects: "Subjects", nav_details: "Details", nav_download: "Download",
+                hero_badge: "🔬 Virtual Lab", hero_title1: "Vertual Lab LK", hero_title2: "Real Lab Experience Digitized",
+                typing_prefix: "Practical experiments for ", hero_desc: "Practical experiments & MCQ for A/L & O/L Science.",
+                cta_play: "Get App", cta_explore: "Explore", app_official: "Vertual Lab LK Official",
+                subjects_title: "📚 Subject Range", subjects_desc: "Interactive practicals for Advanced and Ordinary Level",
+                chem_title: "A/L Chemistry", chem_desc: "Chemical reactions", chem_prac: "30+ Practicals", chem_mcq: "500+ MCQ", chem_badge: "New",
+                phy_title: "A/L Physics", phy_desc: "Mechanics", phy_prac: "25+ Experiments", phy_mcq: "450+ MCQ", phy_badge: "Interactive",
+                bio_title: "A/L Biology", bio_desc: "Human body", bio_prac: "20+ 3D Practicals", bio_mcq: "600+ MCQ", bio_badge: "Lively",
+                ol_title: "O/L Science", ol_desc: "Physical science", ol_prac: "20+ Practicals", ol_mcq: "800+ MCQ", ol_badge: "All units",
+                feature_title: "🔬 Practicals & MCQ", feature_desc: "Real lab simulations.",
+                stat1: "Practicals", stat2: "MCQs", stat3: "Units", offline_title: "Anywhere", offline_desc: "Offline access.",
+                dev_title: "Developer", dev_desc: "Creator of Vertual Lab Lk.",
+                cta_title: "Start Today", cta_sub: "For A/L & O/L students", footer_contact: "Support: kavindusky07@gmail.com", footer_rights: "W. Kavindu Nimesh Vanel Fernando"
+            },
+            ta: {
+                nav_home: "முகப்பு", nav_subjects: "பாடங்கள்", nav_details: "விவரங்கள்", nav_download: "பதிவிறக்க",
+                hero_badge: "🔬 மெய்நிகர் ஆய்வகம்", hero_title1: "Vertual Lab LK", hero_title2: "உண்மையான ஆய்வக அனுபவம்",
+                typing_prefix: "நடைமுறை சோதனைகள் ", hero_desc: "A/L மற்றும் O/L அறிவியலுக்கான நடைமுறைகள் & MCQ.",
+                cta_play: "பயன்பாட்டைப் பெறுக", cta_explore: "ஆராய்க", app_official: "Vertual Lab LK அதிகாரப்பூர்வ",
+                subjects_title: "📚 எங்கள் பாட வரம்பு", subjects_desc: "உயர்தர மற்றும் சாதாரண தர அறிவியலுக்கான ஊடாடும் நடைமுறைகள்",
+                chem_title: "A/L வேதியியல்", chem_desc: "வேதி வினைகள்", chem_prac: "30+ நடைமுறைகள்", chem_mcq: "500+ MCQ", chem_badge: "புதிய",
+                phy_title: "A/L இயற்பியல்", phy_desc: "விசையியல்", phy_prac: "25+ சோதனைகள்", phy_mcq: "450+ MCQ", phy_badge: "ஊடாடும்",
+                bio_title: "A/L உயிரியல்", bio_desc: "மனித உடல்", bio_prac: "20+ 3D நடைமுறைகள்", bio_mcq: "600+ MCQ", bio_badge: "உயிருள்ள",
+                ol_title: "O/L அறிவியல்", ol_desc: "இயற்பியல் அறிவியல்", ol_prac: "20+ நடைமுறைகள்", ol_mcq: "800+ MCQ", ol_badge: "அனைத்து",
+                feature_title: "🔬 நடைமுறைகள் & MCQ", feature_desc: "உண்மையான ஆய்வக உருவகப்படுத்துதல்கள்.",
+                stat1: "நடைமுறைகள்", stat2: "MCQ", stat3: "அலகுகள்", offline_title: "எங்கு வேண்டுமானாலும்", offline_desc: "ஆஃப்லைன் அணுகல்.",
+                dev_title: "உருவாக்குநர்", dev_desc: "Vertual Lab Lk படைப்பாளர்.",
+                cta_title: "இன்றே தொடங்குங்கள்", cta_sub: "A/L மற்றும் O/L மாணவர்களுக்கு", footer_contact: "ஆதரவு: kavindusky07@gmail.com", footer_rights: "W. Kavindu Nimesh Vanel Fernando"
+            }
+        };
+        
+        function setLanguage(lang) {
+            document.querySelectorAll('[data-key]').forEach(el => {
+                const key = el.getAttribute('data-key');
+                if (translations[lang] && translations[lang][key]) el.innerHTML = translations[lang][key];
+            });
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.lang === lang));
+        }
+        document.querySelectorAll('.lang-btn').forEach(btn => btn.addEventListener('click', () => setLanguage(btn.dataset.lang)));
+        setLanguage('si');
+    </script>
+</body>
+  </html>
