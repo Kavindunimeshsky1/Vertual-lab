@@ -207,6 +207,33 @@ footer{background:var(--bg2);border-top:1px solid var(--card-border);padding:40p
 .footer-copy{color:var(--text3);font-size:0.8rem;line-height:1.7;}
 .footer-copy a{color:var(--secondary);text-decoration:none;}
 
+/* COMING SOON MODAL */
+#cs-modal{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;padding:20px;}
+#cs-modal.open{display:flex;}
+.cs-backdrop{position:absolute;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);}
+.cs-box{position:relative;z-index:1;background:var(--card-bg);border:1.5px solid var(--card-border);border-radius:28px;padding:44px 36px;max-width:420px;width:100%;text-align:center;backdrop-filter:blur(24px);box-shadow:0 30px 80px rgba(79,70,229,0.35);animation:csIn 0.4s cubic-bezier(0.34,1.56,0.64,1);}
+@keyframes csIn{from{opacity:0;transform:scale(0.7) translateY(30px);}to{opacity:1;transform:scale(1) translateY(0);}}
+.cs-icon-wrap{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;font-size:2rem;color:#fff;margin:0 auto 20px;box-shadow:0 8px 30px rgba(79,70,229,0.4);animation:rocketFloat 2s ease-in-out infinite;}
+@keyframes rocketFloat{0%,100%{transform:translateY(0) rotate(-10deg);}50%{transform:translateY(-8px) rotate(10deg);}}
+.cs-title{font-family:'Poppins',sans-serif;font-size:1.4rem;font-weight:800;margin-bottom:8px;background:linear-gradient(135deg,var(--primary-light),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.cs-sub{color:var(--text2);font-size:0.9rem;line-height:1.65;margin-bottom:22px;}
+.cs-badge-row{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:26px;}
+.cs-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;font-size:0.78rem;font-weight:600;background:rgba(79,70,229,0.1);border:1px solid rgba(79,70,229,0.25);color:var(--primary-light);}
+.cs-badge.cyan{background:rgba(6,182,212,0.1);border-color:rgba(6,182,212,0.25);color:var(--secondary);}
+.cs-notify-wrap{display:flex;gap:8px;margin-bottom:18px;}
+.cs-notify-input{flex:1;padding:10px 16px;border-radius:50px;border:1.5px solid var(--card-border);background:rgba(255,255,255,0.05);color:var(--text);font-size:0.87rem;outline:none;transition:all var(--trans);}
+[data-theme="light"] .cs-notify-input{background:rgba(0,0,0,0.04);}
+.cs-notify-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(79,70,229,0.12);}
+.cs-notify-btn{padding:10px 18px;border-radius:50px;background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;border:none;cursor:pointer;font-weight:700;font-size:0.85rem;transition:all var(--trans);white-space:nowrap;}
+.cs-notify-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(79,70,229,0.4);}
+.cs-progress-label{color:var(--text3);font-size:0.75rem;margin-bottom:6px;text-align:left;}
+.cs-progress-bar-wrap{height:6px;background:rgba(79,70,229,0.12);border-radius:10px;overflow:hidden;margin-bottom:20px;}
+.cs-progress-fill{height:100%;width:72%;background:linear-gradient(90deg,var(--primary),var(--secondary));border-radius:10px;animation:fillBar 1.5s ease forwards;}
+@keyframes fillBar{from{width:0;}to{width:72%;}}
+.cs-close{margin-top:4px;background:none;border:1.5px solid var(--card-border);color:var(--text2);padding:9px 24px;border-radius:50px;cursor:pointer;font-size:0.85rem;font-weight:600;transition:all var(--trans);}
+.cs-close:hover{background:var(--glass);color:var(--text);}
+.cs-success{display:none;color:var(--secondary);font-size:0.85rem;font-weight:600;margin-bottom:8px;}
+
 /* FABS */
 #back-top{position:fixed;bottom:28px;right:22px;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1rem;box-shadow:0 4px 20px rgba(79,70,229,0.4);opacity:0;transform:translateY(20px);transition:all var(--trans);z-index:500;}
 #back-top.visible{opacity:1;transform:translateY(0);}
@@ -223,6 +250,24 @@ footer{background:var(--bg2);border-top:1px solid var(--card-border);padding:40p
 /* DIVIDER */
 .divider{height:1px;background:linear-gradient(90deg,transparent,var(--card-border),transparent);margin:0 24px;}
 
+/* SCREENSHOTS */
+.screenshots-wrap{overflow:hidden;}
+.phone-mockup-row{display:flex;justify-content:center;align-items:flex-end;gap:28px;flex-wrap:wrap;padding:20px 0 30px;}
+.phone-mockup{display:flex;flex-direction:column;align-items:center;gap:14px;transition:transform var(--trans);}
+.phone-mockup:hover{transform:translateY(-10px);}
+.phone-mockup.featured{transform:scale(1.08);z-index:2;}
+.phone-mockup.featured:hover{transform:scale(1.08) translateY(-10px);}
+.phone-frame{width:160px;border-radius:32px;background:linear-gradient(145deg,#1a1f4e,#0d1438);border:2px solid rgba(79,70,229,0.4);box-shadow:0 20px 60px rgba(79,70,229,0.3),0 0 0 1px rgba(79,70,229,0.1),inset 0 0 20px rgba(0,0,0,0.3);padding:10px 8px;position:relative;overflow:hidden;cursor:zoom-in;}
+.phone-mockup.featured .phone-frame{width:190px;box-shadow:0 30px 80px rgba(79,70,229,0.45),0 0 0 2px rgba(79,70,229,0.3);}
+.phone-notch{width:60px;height:10px;background:#000;border-radius:0 0 12px 12px;margin:0 auto 6px;position:relative;z-index:2;}
+.phone-screen{border-radius:20px;overflow:hidden;background:#000;line-height:0;position:relative;}
+.phone-screen img{width:100%;display:block;border-radius:20px;transition:transform 0.4s ease;}
+.phone-frame:hover .phone-screen img{transform:scale(1.03);}
+.phone-home-bar{width:50px;height:4px;background:rgba(255,255,255,0.25);border-radius:3px;margin:8px auto 0;}
+.phone-label{font-size:0.82rem;font-weight:600;color:var(--text2);text-align:center;padding:4px 14px;border-radius:20px;background:rgba(79,70,229,0.08);border:1px solid rgba(79,70,229,0.18);}
+[data-theme="light"] .phone-frame{background:linear-gradient(145deg,#e0e7ff,#c7d2fe);border-color:rgba(79,70,229,0.3);}
+@media(max-width:600px){.phone-frame{width:130px;}.phone-mockup.featured .phone-frame{width:150px;}.phone-mockup-row{gap:16px;}}
+
 @keyframes rotatering{to{transform:rotate(360deg);}}
 </style>
 </head>
@@ -235,6 +280,29 @@ footer{background:var(--bg2);border-top:1px solid var(--card-border);padding:40p
   <div class="pre-logo"><img src="https://i.ibb.co/FbsS9XCP/file-0000000077e47209814fe7c56eb07844.png" alt="Vertual Lab LK"/></div>
   <div class="pre-spinner"></div>
   <div class="pre-text">Vertual Lab LK</div>
+</div>
+
+<!-- COMING SOON MODAL -->
+<div id="cs-modal">
+  <div class="cs-backdrop" onclick="closeCSModal()"></div>
+  <div class="cs-box">
+    <div class="cs-icon-wrap"><i class="fa-solid fa-rocket"></i></div>
+    <div class="cs-title" data-i18n="cs_title">Coming Soon! 🚀</div>
+    <p class="cs-sub" data-i18n="cs_sub">Vertual Lab LK app එක දැනට launch සඳහා prepare වෙමින් තිබේ. Play Store සහ App Store හි ඉක්මනින් launch වේ!</p>
+    <div class="cs-badge-row">
+      <span class="cs-badge"><i class="fa-brands fa-google-play"></i><span data-i18n="cs_b1">Google Play</span></span>
+      <span class="cs-badge cyan"><i class="fa-brands fa-apple"></i><span data-i18n="cs_b2">App Store</span></span>
+      <span class="cs-badge"><i class="fa-solid fa-clock"></i><span data-i18n="cs_b3">Coming Soon</span></span>
+    </div>
+    <div class="cs-progress-label" data-i18n="cs_prog_label">Development Progress</div>
+    <div class="cs-progress-bar-wrap"><div class="cs-progress-fill"></div></div>
+    <div class="cs-notify-wrap">
+      <input class="cs-notify-input" type="email" id="cs-email" placeholder="your@email.com"/>
+      <button class="cs-notify-btn" onclick="submitNotify()" data-i18n="cs_notify">Notify Me</button>
+    </div>
+    <div class="cs-success" id="cs-success"><i class="fa-solid fa-circle-check"></i> <span data-i18n="cs_success_msg">Thank you! We'll notify you at launch.</span></div>
+    <button class="cs-close" onclick="closeCSModal()" data-i18n="cs_close">Close</button>
+  </div>
 </div>
 
 <!-- CANVAS -->
@@ -285,7 +353,7 @@ footer{background:var(--bg2);border-top:1px solid var(--card-border);padding:40p
       </div>
       <p class="hero-desc" data-i18n="hero_desc">A/L Chemistry, Physics, Biology සහ O/L Science සිසුන් සඳහා නිර්මාණය කරන ලද Virtual Science Lab — ප්‍රායෝගික අත්හදා බැලීම් සහ MCQ ප්‍රශ්නාවලිය ඔබේ ඇඟිලි තුඩේ.</p>
       <div class="hero-btns">
-        <a href="#download" class="btn-primary"><i class="fa-solid fa-download"></i><span data-i18n="btn_download">Download App</span></a>
+        <a href="#download" class="btn-primary" onclick="openCSModal('hero')"><i class="fa-solid fa-download"></i><span data-i18n="btn_download">Download App</span></a>
         <a href="#subjects" class="btn-outline"><i class="fa-solid fa-flask"></i><span data-i18n="btn_explore">Explore Subjects</span></a>
       </div>
     </div>
@@ -435,6 +503,58 @@ footer{background:var(--bg2);border-top:1px solid var(--card-border);padding:40p
 
 <div class="divider"></div>
 
+<!-- APP SCREENSHOTS -->
+<section id="screenshots">
+  <div class="section-wrap">
+    <div class="section-header text-center mx-auto" data-aos="fade-up">
+      <div class="section-label"><i class="fa-solid fa-mobile-screen"></i><span data-i18n="ss_label">App Screenshots</span></div>
+      <h2 class="section-title" data-i18n="ss_title">App එකේ Screenshots බලන්න</h2>
+      <p class="section-desc mx-auto" data-i18n="ss_desc">Vertual Lab LK app එකේ actual interface — beautiful, intuitive, and student-friendly.</p>
+    </div>
+    <div class="screenshots-wrap" data-aos="fade-up">
+      <div class="phone-mockup-row">
+        <div class="phone-mockup" data-aos="fade-up" data-aos-delay="0">
+          <div class="phone-frame">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+              <img src="https://i.ibb.co/d03W0Yk0/Screenshot-20260617-153552.png" alt="App Screenshot 1" loading="lazy"/>
+            </div>
+            <div class="phone-home-bar"></div>
+          </div>
+          <div class="phone-label" data-i18n="ss1_label">Home Screen</div>
+        </div>
+        <div class="phone-mockup featured" data-aos="fade-up" data-aos-delay="100">
+          <div class="phone-frame">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+              <img src="https://i.ibb.co/4w4spJ1n/Screenshot-20260617-153524.png" alt="App Screenshot 2" loading="lazy"/>
+            </div>
+            <div class="phone-home-bar"></div>
+          </div>
+          <div class="phone-label" data-i18n="ss2_label">Virtual Lab</div>
+        </div>
+        <div class="phone-mockup" data-aos="fade-up" data-aos-delay="200">
+          <div class="phone-frame">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+              <img src="https://i.ibb.co/G1T94HL/Screenshot-20260617-153545.png" alt="App Screenshot 3" loading="lazy"/>
+            </div>
+            <div class="phone-home-bar"></div>
+          </div>
+          <div class="phone-label" data-i18n="ss3_label">MCQ Practice</div>
+        </div>
+      </div>
+      <!-- Lightbox -->
+      <div id="lightbox" onclick="closeLightbox()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:9000;align-items:center;justify-content:center;cursor:zoom-out;">
+        <img id="lightbox-img" src="" style="max-height:90vh;max-width:90vw;border-radius:16px;box-shadow:0 0 60px rgba(79,70,229,0.4);"/>
+        <button onclick="closeLightbox()" style="position:absolute;top:20px;right:24px;background:rgba(255,255,255,0.1);border:none;color:#fff;font-size:1.5rem;width:44px;height:44px;border-radius:50%;cursor:pointer;">✕</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
 <!-- DEVELOPER -->
 <section id="developer">
   <div class="section-wrap">
@@ -507,11 +627,11 @@ footer{background:var(--bg2);border-top:1px solid var(--card-border);padding:40p
       <h2 class="section-title" data-i18n="cta_title">Start Vertual Lab LK Today</h2>
       <p class="section-desc mx-auto" data-i18n="cta_desc">ශ්‍රී ලාංකික science students ලක්ෂ ගණනාවකට real lab experience digital ලෙස ලබා දෙන ඔබේ trusted virtual lab partner. දැන්ම download කරන්න!</p>
       <div class="cta-btns">
-        <a href="#" class="store-btn">
+        <a href="#" class="store-btn" onclick="event.preventDefault();openCSModal('google')">
           <i class="fa-brands fa-google-play" style="color:#4f46e5;"></i>
           <div class="store-btn-text"><small data-i18n="google_small">Get it on</small><strong>Google Play</strong></div>
         </a>
-        <a href="#" class="store-btn">
+        <a href="#" class="store-btn" onclick="event.preventDefault();openCSModal('apple')">
           <i class="fa-brands fa-apple" style="color:#6366f1;"></i>
           <div class="store-btn-text"><small data-i18n="apple_small">Download on the</small><strong>App Store</strong></div>
         </a>
@@ -586,7 +706,13 @@ const T = {
     google_small:"Download on",apple_small:"Download on the",contact_text:"සම්බන්ධ වීමට:",
     footer_dev:"නිර්මාණය:",footer_rights:"සියලු හිමිකම් ඇවිරිණි.",
     nav_home:"මුල් පිටුව",nav_sub:"විෂයයන්",nav_feat:"විශේෂාංග",nav_dev:"Developer",nav_dl:"Download",
-    search_ph:"විෂයයක් සොයන්න..."
+    search_ph:"විෂයයක් සොයන්න...",
+    ss_label:"App Screenshots",ss_title:"App එකේ Screenshots බලන්න",ss_desc:"Vertual Lab LK app එකේ actual interface — beautiful, intuitive, and student-friendly.",
+    ss1_label:"Home Screen",ss2_label:"Virtual Lab",ss3_label:"MCQ Practice",
+    cs_title:"Coming Soon! 🚀",cs_sub:"Vertual Lab LK app එක දැනට launch සඳහා prepare වෙමින් තිබේ. Play Store සහ App Store හි ඉක්මනින් launch වේ!",
+    cs_b1:"Google Play",cs_b2:"App Store",cs_b3:"Coming Soon",
+    cs_prog_label:"Development Progress — 72%",
+    cs_notify:"Notify Me",cs_close:"Close",cs_success_msg:"ස්තූතියි! Launch වූ විට දන්වන්නම්."
   },
   en:{
     badge:"Latest EdTech Innovation",
@@ -615,7 +741,13 @@ const T = {
     google_small:"Get it on",apple_small:"Download on the",contact_text:"Contact us:",
     footer_dev:"Developed by",footer_rights:"All rights reserved.",
     nav_home:"Home",nav_sub:"Subjects",nav_feat:"Features",nav_dev:"Developer",nav_dl:"Download",
-    search_ph:"Search a subject..."
+    search_ph:"Search a subject...",
+    ss_label:"App Screenshots",ss_title:"See the App in Action",ss_desc:"The actual Vertual Lab LK interface — beautiful, intuitive, and built for students.",
+    ss1_label:"Home Screen",ss2_label:"Virtual Lab",ss3_label:"MCQ Practice",
+    cs_title:"Coming Soon! 🚀",cs_sub:"Vertual Lab LK app is currently being prepared for launch. Coming soon on Play Store and App Store!",
+    cs_b1:"Google Play",cs_b2:"App Store",cs_b3:"Coming Soon",
+    cs_prog_label:"Development Progress — 72%",
+    cs_notify:"Notify Me",cs_close:"Close",cs_success_msg:"Thank you! We'll notify you at launch."
   },
   ta:{
     badge:"சமீபத்திய கல்வி தொழில்நுட்பம்",
@@ -644,7 +776,13 @@ const T = {
     google_small:"Get it on",apple_small:"Download on the",contact_text:"தொடர்பு:",
     footer_dev:"உருவாக்கியவர்:",footer_rights:"அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை.",
     nav_home:"முகப்பு",nav_sub:"பாடங்கள்",nav_feat:"அம்சங்கள்",nav_dev:"Developer",nav_dl:"பதிவிறக்கம்",
-    search_ph:"ஒரு பாடத்தை தேடுங்கள்..."
+    search_ph:"ஒரு பாடத்தை தேடுங்கள்...",
+    ss_label:"App Screenshots",ss_title:"App-ஐ நேரில் பாருங்கள்",ss_desc:"Vertual Lab LK-இன் உண்மையான interface — அழகான, எளிதான, மாணவர்களுக்காக.",
+    ss1_label:"Home Screen",ss2_label:"Virtual Lab",ss3_label:"MCQ Practice",
+    cs_title:"Coming Soon! 🚀",cs_sub:"Vertual Lab LK app தற்போது launch-க்கு தயாராகிறது. Play Store மற்றும் App Store-ல் விரைவில் வருகிறது!",
+    cs_b1:"Google Play",cs_b2:"App Store",cs_b3:"Coming Soon",
+    cs_prog_label:"Development Progress — 72%",
+    cs_notify:"அறிவிப்பு பெறுக",cs_close:"மூடு",cs_success_msg:"நன்றி! Launch-ல் உங்களுக்கு தெரிவிப்போம்."
   }
 };
 
@@ -814,8 +952,47 @@ window.addEventListener('load',()=>{
   },1500);
 });
 
+// COMING SOON MODAL
+function openCSModal(src){
+  const m=document.getElementById('cs-modal');
+  m.classList.add('open');
+  document.getElementById('cs-success').style.display='none';
+  document.getElementById('cs-email').value='';
+  // re-trigger progress bar animation
+  const fill=m.querySelector('.cs-progress-fill');
+  fill.style.animation='none';fill.offsetHeight;fill.style.animation='';
+  document.body.style.overflow='hidden';
+}
+function closeCSModal(){
+  document.getElementById('cs-modal').classList.remove('open');
+  document.body.style.overflow='';
+}
+function submitNotify(){
+  const email=document.getElementById('cs-email').value.trim();
+  if(!email||!email.includes('@')){
+    document.getElementById('cs-email').style.borderColor='#ef4444';
+    setTimeout(()=>document.getElementById('cs-email').style.borderColor='',1500);
+    return;
+  }
+  document.querySelector('.cs-notify-wrap').style.display='none';
+  document.getElementById('cs-success').style.display='block';
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeCSModal();});
+
 // INIT
 setLang('si');
+
+// SCREENSHOTS LIGHTBOX
+document.querySelectorAll('.phone-frame').forEach(f=>{
+  f.addEventListener('click',()=>{
+    const img=f.querySelector('img');
+    const lb=document.getElementById('lightbox');
+    document.getElementById('lightbox-img').src=img.src;
+    lb.style.display='flex';
+  });
+});
+function closeLightbox(){document.getElementById('lightbox').style.display='none';}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLightbox();});
 </script>
 </body>
-                      </html>
+    </html>
